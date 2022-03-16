@@ -67,8 +67,7 @@ def get_sleep_chart():
             hours_dict['Date'].append(sleep_date)
             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
     sleep_df = pd.DataFrame(hours_dict)
-    fig = px.line(sleep_df, x='Date', y='Hours',
-                  markers=True)
+    fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
     fig.update_traces(line=dict(width=3), marker=dict(size=10))
 
     return fig.to_json()
