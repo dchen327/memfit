@@ -11,6 +11,9 @@ from pathlib import Path
 
 from datetime import date, time, datetime, timedelta
 
+import plotly.express as px
+import pandas as pd
+
 
 fake = Faker()
 
@@ -43,7 +46,20 @@ def add_sleep():
 
 
 def plot_sleep():
-    ''' Pull sleep data from Firestore, and plot'''
+    ''' Plot sleep data in a line chart of length of sleep '''
+    sleep_data = get_sleep_data()
+    hours_dict = {'Date': [], 'Hours': []}
+    for i in range(len(sleep_data) - 1):
+        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
+            sleep_date = sleep_data[i][0].date()
+            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
+            print(sleep_time, wake_time, wake_time - sleep_time)
+    # fig = px.line(sleep_df, x='datetime', y='length', color='type')
+    # fig.show()
+
+
+def get_sleep_data():
+    ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
     sort_date_query = sleep_ref.order_by('datetime')
     sleep_docs = sort_date_query.stream()
     sleep_data = []
@@ -55,7 +71,9 @@ def plot_sleep():
             sleep_data.append((sleep_date, 'wake'))
         else:
             sleep_data.append((sleep_date, 'sleep'))
-    print([i[1] for i in sleep_data])
+
+    # list of tuples (datetime, 'sleep' OR 'wake')
+    return sleep_data
 
 
 plot_sleep()
