@@ -6,7 +6,6 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from dotenv import load_dotenv
 import os
-import json
 
 import plotly.express as px
 import pandas as pd
