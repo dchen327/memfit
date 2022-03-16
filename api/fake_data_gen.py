@@ -8,7 +8,7 @@ from firebase_admin import firestore
 from faker import Faker
 from pathlib import Path
 
-import datetime
+from datetime import date, time, datetime, timedelta
 
 
 fake = Faker()
@@ -25,9 +25,11 @@ sleep_ref = db.collection('sleep')
 
 def add_sleep():
     ''' Add randomized sleep times '''
-    today_date = datetime.date.today()
-    print(today_date)
-    # for day in range(10):
+    today_date = date.today()
+    for day in range(10):
+        # sleep between 10pm and 2am
+        earliest_sleep = datetime.combine(today_date, time(22, 0))
+        latest_sleep = datetime.combine(today_date, time(2, 0))
 
 
 add_sleep()
