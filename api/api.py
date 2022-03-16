@@ -31,4 +31,5 @@ def index():
 @cross_origin()
 def log_sleep():
     ''' Log sleep time to firestore db '''
+    print(datetime.datetime.now())
     sleep_col.add({'datetime': datetime.datetime.now()})
