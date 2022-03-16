@@ -35,6 +35,26 @@ def log_sleep():
     return jsonify(success=True)
 
 
+@app.route('/api/charts', methods=['GET', 'POST'])
+@cross_origin()
+def charts():
+    ''' Return requested generated charts '''
+    params = request.get_json()
+    chart_names = params.get('charts')
+
+    return get_requested_charts(chart_names)
+
+
+def get_requested_charts(chart_names):
+    ''' Generate and return the requested charts '''
+    charts = {}
+    for chart_name in chart_names:
+        if chart_name == 'Sleep':
+            charts[chart_name] = get_sleep_chart()
+
+    return charts
+
+
 @app.route('/api/getSleep', methods=['GET'])
 @cross_origin()
 def get_sleep_chart():

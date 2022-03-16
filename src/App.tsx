@@ -2,6 +2,7 @@ import "bulma/css/bulma.min.css";
 import { Navbar } from "./components/Navbar";
 import { initializeApp } from "firebase/app";
 import { useEffect, useState } from "react";
+import Charts from "./components/Charts";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAOP5AI_22FkCuUhsaCoCuXwp4J1CpMDQo",
@@ -15,13 +16,13 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 function App() {
-  const [charts, setCharts] = useState(null);
+  const [charts, setCharts] = useState<string[] | null>(null);
 
   useEffect(() => {
     loadCharts().then((chartJSON) => {
       setCharts(chartJSON);
-    })
-  })
+    });
+  });
 
   const logSleep = () => {
     fetch("/api/logSleep", {
@@ -31,8 +32,8 @@ function App() {
   };
 
   const loadCharts = async () => {
-    return fetch('/api/getSleep').then((res) => res.json());
-  }
+    return fetch("/api/getSleep").then((res) => res.json());
+  };
 
   return (
     <div>
@@ -43,6 +44,9 @@ function App() {
         <button className="button" onClick={logSleep}>
           Log Sleep
         </button>
+      </section>
+      <section className="section">
+        {charts && <Charts charts={charts} chartNames={["Sleep"]} />}
       </section>
     </div>
   );

@@ -1,6 +1,7 @@
 import Plot from "react-plotly.js";
 
 interface Props {
+  key: number;
   chartJSON: string;
 }
 
