@@ -1,6 +1,7 @@
 import "bulma/css/bulma.min.css";
 import { Navbar } from "./components/Navbar";
 import { initializeApp } from "firebase/app";
+import { useEffect, useState } from "react";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAOP5AI_22FkCuUhsaCoCuXwp4J1CpMDQo",
@@ -14,12 +15,24 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 function App() {
+  const [charts, setCharts] = useState(null);
+
+  useEffect(() => {
+    loadCharts().then((chartJSON) => {
+      setCharts(chartJSON);
+    })
+  })
+
   const logSleep = () => {
     fetch("/api/logSleep", {
       method: "POST",
     });
     console.log("api called");
   };
+
+  const loadCharts = async () => {
+    return fetch('/api/getSleep').then((res) => res.json());
+  }
 
   return (
     <div>
