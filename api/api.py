@@ -33,3 +33,42 @@ def log_sleep():
     ''' Log sleep time to firestore db '''
     sleep_ref.add({'datetime': datetime.datetime.now()})
     return jsonify(success=True)
+
+
+@app.route('/api/getSleep', methods=['GET'])
+@cross_origin()
+def get_sleep_chart():
+    ''' Plot sleep data in a line chart, return Plotly json '''
+    sleep_data = get_sleep_data()
+    hours_dict = {'Date': [], 'Hours': []}
+    for i in range(len(sleep_data) - 1):
+        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
+            sleep_date = sleep_data[i+1][0].date()
+            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
+            sleep_hours = wake_time - sleep_time
+            hours_dict['Date'].append(sleep_date)
+            hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+    sleep_df = pd.DataFrame(hours_dict)
+    fig = px.line(sleep_df, x='Date', y='Hours',
+                  markers=True)
+    fig.update_traces(line=dict(width=3), marker=dict(size=10))
+
+    return fig.to_json()
+
+
+def get_sleep_data():
+    ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
+    sort_date_query = sleep_ref.order_by('datetime')
+    sleep_docs = sort_date_query.stream()
+    sleep_data = []
+    # loop through sorted list of datetimes, label as sleep or wake
+    for sleep_doc in sleep_docs:
+        sleep_date = sleep_doc.get('datetime')
+        # assume wake up is between 4AM and 4PM
+        if time(4, 0) < sleep_date.time() < time(16, 0):
+            sleep_data.append((sleep_date, 'wake'))
+        else:
+            sleep_data.append((sleep_date, 'sleep'))
+
+    # list of tuples (datetime, 'sleep' OR 'wake')
+    return sleep_data
