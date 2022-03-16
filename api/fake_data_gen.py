@@ -28,18 +28,34 @@ def add_sleep():
     ''' Add randomized sleep times '''
     today_date = date.today()
     for day_num in range(10):
-        day = today_date - timedelta(days=day)
-        # sleep between 10pm and 2am
+        day = today_date - timedelta(days=day_num)
+        # sleep between 10PM and 2AM
         earliest_sleep = datetime.combine(day, time(22, 0))
         latest_sleep = datetime.combine(
-            day + timedelta(day=1), time(2, 0))
+            day + timedelta(days=1), time(2, 0))
         sleep_time = fake.date_time_between(
-            earliest=earliest_sleep, latest=latest_sleep)
-        # sleep between 6-10 hours
+            start_date=earliest_sleep, end_date=latest_sleep)
+        # sleep between 5-10 hours
         wake_time = sleep_time + \
-            timedelta(minutes=random.randint(6 * 60, 10 * 60))
+            timedelta(minutes=random.randint(5 * 60, 10 * 60))
         sleep_ref.add({'datetime': sleep_time})
         sleep_ref.add({'datetime': wake_time})
 
 
-add_sleep()
+def plot_sleep():
+    ''' Pull sleep data from Firestore, and plot'''
+    sort_date_query = sleep_ref.order_by('datetime')
+    sleep_docs = sort_date_query.stream()
+    sleep_data = []
+    # loop through sorted list of datetimes, label as sleep or wake
+    for sleep_doc in sleep_docs:
+        sleep_date = sleep_doc.get('datetime')
+        # assume wake up is between 4AM and 4PM
+        if time(4, 0) < sleep_date.time() < time(16, 0):
+            sleep_data.append((sleep_date, 'wake'))
+        else:
+            sleep_data.append((sleep_date, 'sleep'))
+    print([i[1] for i in sleep_data])
+
+
+plot_sleep()
