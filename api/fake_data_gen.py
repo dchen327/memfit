@@ -13,7 +13,8 @@ import datetime
 
 fake = Faker()
 
-cred_path = Path('./firebase_key.json')
+cred_path = Path('./api/firebase_key.json')
+# list files in directory
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred, {'projectId': 'mem-fit'})
 
