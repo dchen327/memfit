@@ -18,7 +18,7 @@ cred = credentials.Certificate('firebase_key.json')
 firebase_admin.initialize_app(cred, {'projectId': 'mem-fit'})
 
 db = firestore.client()
-sleep_col = db.collection('sleep')
+sleep_ref = db.collection('sleep')
 
 
 @app.route('/')
@@ -31,5 +31,5 @@ def index():
 @cross_origin()
 def log_sleep():
     ''' Log sleep time to firestore db '''
-    sleep_col.add({'datetime': datetime.datetime.now()})
+    sleep_ref.add({'datetime': datetime.datetime.now()})
     return jsonify(success=True)
