@@ -1,20 +1,37 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-import plotly.express as px
-
-import pandas as pd
-import datetime
 
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from dotenv import load_dotenv
+import os
+import json
+
+import plotly.express as px
+import pandas as pd
+import datetime
+
 
 # Flask setup
 app = Flask(__name__, static_folder='../build', static_url_path='/')
 CORS(app)
 
 # Firebase setup
-cred = credentials.Certificate('firebase_key.json')
+load_dotenv()
+FIREBASE_CONFIG = {
+    "type": "service_account",
+    "project_id": "mem-fit",
+    "private_key_id": os.getenv("PY_FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("PY_FIREBASE_PRIVATE_KEY"),
+    "client_email": "firebase-adminsdk-m1254@mem-fit.iam.gserviceaccount.com",
+    "client_id": "103893414132813680155",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-m1254%40mem-fit.iam.gserviceaccount.com"
+}
+cred = credentials.Certificate(FIREBASE_CONFIG)
 firebase_admin.initialize_app(cred, {'projectId': 'mem-fit'})
 
 db = firestore.client()
