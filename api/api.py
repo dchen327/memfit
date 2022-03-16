@@ -50,7 +50,9 @@ def get_requested_charts(chart_names):
     charts = {}
     for chart_name in chart_names:
         if chart_name == 'Sleep':
-            charts[chart_name] = get_sleep_chart()
+            # charts[chart_name] = get_sleep_chart()
+            charts[chart_name] = px.scatter(
+                x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16]).to_json()
 
     return charts
 

@@ -25,10 +25,23 @@ function App() {
   const chartNames = ["Sleep"];
 
   useEffect(() => {
-    loadCharts().then((chartJSON) => {
-      setCharts(chartJSON);
-    });
-  });
+    console.log("pulling chart from api");
+    fetch("/api/charts", {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({
+        // params: charts is a list of chart names to return
+        charts: ["Sleep"],
+      }),
+    }).then((res) =>
+      res.json().then((chartJSON) => {
+        setCharts(chartJSON);
+      })
+    );
+  }, []);
 
   const logSleep = () => {
     fetch("/api/logSleep", {
@@ -38,6 +51,7 @@ function App() {
   };
 
   const loadCharts = async () => {
+    console.log("pulling chart from api");
     return fetch("/api/charts", {
       headers: {
         Accept: "application/json",
