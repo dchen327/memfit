@@ -51,11 +51,17 @@ def plot_sleep():
     hours_dict = {'Date': [], 'Hours': []}
     for i in range(len(sleep_data) - 1):
         if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
-            sleep_date = sleep_data[i][0].date()
+            sleep_date = sleep_data[i+1][0].date()
             sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
-            print(sleep_time, wake_time, wake_time - sleep_time)
-    # fig = px.line(sleep_df, x='datetime', y='length', color='type')
-    # fig.show()
+            sleep_hours = wake_time - sleep_time
+            hours_dict['Date'].append(sleep_date)
+            hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+    sleep_df = pd.DataFrame(hours_dict)
+    fig = px.line(sleep_df, x='Date', y='Hours',
+                  markers=True)
+    fig.update_traces(line=dict(width=3), marker=dict(size=10))
+
+    fig.show()
 
 
 def get_sleep_data():
