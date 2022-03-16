@@ -50,21 +50,6 @@ function App() {
     console.log("api called");
   };
 
-  const loadCharts = async () => {
-    console.log("pulling chart from api");
-    return fetch("/api/charts", {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({
-        // params: charts is a list of chart names to return
-        charts: ["Sleep"],
-      }),
-    }).then((res) => res.json());
-  };
-
   return (
     <div>
       <section className="section">
