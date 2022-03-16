@@ -15,7 +15,9 @@ initializeApp(firebaseConfig);
 
 function App() {
   const logSleep = () => {
-    fetch("/api/logSleep");
+    fetch("/api/logSleep", {
+      method: "POST",
+    });
     console.log("api called");
   };
 

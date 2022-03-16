@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import plotly.express as px
 
@@ -27,9 +27,10 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route('/api/logSleep')
+@app.route('/api/logSleep', methods=['POST'])
 @cross_origin()
 def log_sleep():
     ''' Log sleep time to firestore db '''
     print(datetime.datetime.now())
     sleep_col.add({'datetime': datetime.datetime.now()})
+    return jsonify(success=True)
