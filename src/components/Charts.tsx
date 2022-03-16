@@ -1,7 +1,7 @@
 import PlotlyChart from "./PlotlyChart";
 
 interface Props {
-  charts: ;
+  charts: { [chartName: string]: string };
   chartNames: string[];
 }
 
@@ -10,7 +10,6 @@ const Charts = (props: Props) => {
     <>
       {props.charts &&
         props.chartNames.map((chartName: string, index: number) => {
-          console.log(typeof chartName);
           return (
             <PlotlyChart key={index} chartJSON={props.charts[chartName]} />
           );

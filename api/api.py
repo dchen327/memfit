@@ -55,8 +55,6 @@ def get_requested_charts(chart_names):
     return charts
 
 
-@app.route('/api/getSleep', methods=['GET'])
-@cross_origin()
 def get_sleep_chart():
     ''' Plot sleep data in a line chart, return Plotly json '''
     sleep_data = get_sleep_data()
@@ -85,7 +83,7 @@ def get_sleep_data():
     for sleep_doc in sleep_docs:
         sleep_date = sleep_doc.get('datetime')
         # assume wake up is between 4AM and 4PM
-        if time(4, 0) < sleep_date.time() < time(16, 0):
+        if datetime.time(4, 0) < sleep_date.time() < datetime.time(16, 0):
             sleep_data.append((sleep_date, 'wake'))
         else:
             sleep_data.append((sleep_date, 'sleep'))

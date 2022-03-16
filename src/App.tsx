@@ -15,8 +15,14 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
+interface ICharts {
+  [chartName: string]: string;
+}
+
 function App() {
-  const [charts, setCharts] = useState<string[] | null>(null);
+  const [charts, setCharts] = useState<ICharts | null>(null);
+
+  const chartNames = ["Sleep"];
 
   useEffect(() => {
     loadCharts().then((chartJSON) => {
@@ -32,7 +38,17 @@ function App() {
   };
 
   const loadCharts = async () => {
-    return fetch("/api/getSleep").then((res) => res.json());
+    return fetch("/api/charts", {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({
+        // params: charts is a list of chart names to return
+        charts: ["Sleep"],
+      }),
+    }).then((res) => res.json());
   };
 
   return (
@@ -46,7 +62,7 @@ function App() {
         </button>
       </section>
       <section className="section">
-        {charts && <Charts charts={charts} chartNames={["Sleep"]} />}
+        {charts && <Charts charts={charts} chartNames={chartNames} />}
       </section>
     </div>
   );
