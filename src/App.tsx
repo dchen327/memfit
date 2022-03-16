@@ -15,9 +15,7 @@ initializeApp(firebaseConfig);
 
 function App() {
   const logSleep = () => {
-    const newDate = new Date();
-    console.log(newDate.getDate());
-    // const sleepRef = doc(db, "sleep");
+    fetch("/api/logSleep");
   };
 
   return (

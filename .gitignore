@@ -165,3 +165,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+
+firebase_key.json

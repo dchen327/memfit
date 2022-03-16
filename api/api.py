@@ -14,10 +14,8 @@ app = Flask(__name__, static_folder='../build', static_url_path='/')
 CORS(app)
 
 # Firebase setup
-cred = credentials.ApplicationDefault()
-firebase_admin.initialize_app(cred, {
-    'projectId': 'mem-fit',
-})
+cred = credentials.Certificate('key.json')
+firebase_admin.initialize_app(cred, {'projectId': 'mem-fit'})
 
 db = firestore.client()
 sleep_col = db.collection('sleep')
