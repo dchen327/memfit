@@ -45,7 +45,14 @@ function App() {
 
   const logSleep = () => {
     fetch("/api/logSleep", {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
       method: "POST",
+      body: JSON.stringify({
+        currTime: new Date().getTime(),
+      }),
     });
     console.log("api called");
   };
