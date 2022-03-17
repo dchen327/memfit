@@ -18,6 +18,7 @@ CORS(app)
 
 # Firebase setup
 load_dotenv()
+print(os.getenv("PY_FIREBASE_PRIVATE_KEY_ID"))
 FIREBASE_CONFIG = {
     "type": "service_account",
     "project_id": "mem-fit",
