@@ -54,8 +54,8 @@ function App() {
         currTime: new Date().getTime(),
       }),
     });
-    const resJSON = await res.json();
-    console.log("api called", data);
+    const resText = await res.text();
+    console.log("api called", resText);
   };
 
   return (
