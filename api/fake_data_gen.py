@@ -10,8 +10,7 @@ from faker import Faker
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
-from datetime import date, time, datetime, timedelta, timezone
+import datetime
 
 import plotly.express as px
 import pandas as pd
@@ -53,68 +52,69 @@ def add_sleep(num_days):
     ''' Add randomized sleep times '''
     delete_collection(sleep_ref)
 
-    today_date = date.today()
+    today_date = datetime.date.today()
     for day_num in range(1, num_days):
-        day = today_date - timedelta(days=day_num)
+        day = today_date.date - datetime.timedelta(days=day_num)
         # sleep between 10PM and 2AM
-        earliest_sleep = datetime.combine(
-            day, time(22, 0))
-        latest_sleep = datetime.combine(
-            day + timedelta(days=1), time(2, 0))
+        earliest_sleep = datetime.datetime.combine(
+            day, datetime.time(22, 0))
+        latest_sleep = datetime.datetime.combine(
+            day + datetime.timedelta(days=1), datetime.time(2, 0))
         sleep_time = fake.date_time_between(
             start_date=earliest_sleep, end_date=latest_sleep).astimezone()
 
         # sleep between 5-10 hours
         wake_time = sleep_time + \
-            timedelta(minutes=random.randint(5 * 60, 10 * 60))
+            datetime.timedelta(minutes=random.randint(5 * 60, 10 * 60))
 
         sleep_ref.add({'datetime': sleep_time, 'type': 'sleep'})
         sleep_ref.add({'datetime': wake_time, 'type': 'wake'})
 
 
-# def plot_sleep():
-#     ''' Plot sleep data in a line chart of length of sleep '''
-#     sleep_data = get_sleep_data()
-#     hours_dict = {'Date': [], 'Hours': []}
-#     for i in range(len(sleep_data) - 1):
-#         if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
-#             sleep_date = sleep_data[i+1][0].date()
-#             sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
-#             sleep_hours = wake_time - sleep_time
-#             hours_dict['Date'].append(sleep_date)
-#             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
-#     sleep_df = pd.DataFrame(hours_dict)
-#     fig = px.line(sleep_df, x='Date', y='Hours',
-#                   markers=True)
-#     fig.update_traces(line=dict(width=3), marker=dict(size=10))
-
-#     fig.show()
-
 def plot_sleep():
     ''' Plot sleep data in a line chart of length of sleep '''
     sleep_data = get_sleep_data()
     hours_dict = {'Date': [], 'Hours': []}
-    for sleep_date in sleep_data:
-        try:
-            next_day = sleep_date + timedelta(days=1)
-            sleep_time = sleep_data[sleep_date]['sleep']
-            wake_time = sleep_data[next_day]['wake']
+    for i in range(len(sleep_data) - 1):
+        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
+            # date is wake date minus 1 day
+            sleep_date = sleep_data[i+1][0].date() - datetime.timedelta(days=1)
+            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
             sleep_hours = wake_time - sleep_time
             hours_dict['Date'].append(sleep_date)
             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
-        except KeyError:  # missing data, or it's the current day
-            pass
-
     sleep_df = pd.DataFrame(hours_dict)
-    fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
+    fig = px.line(sleep_df, x='Date', y='Hours',
+                  markers=True)
     fig.update_traces(line=dict(width=3), marker=dict(size=10))
 
-    # add horizontal line at average sleep
-    avg_sleep = sleep_df['Hours'].mean()
-    fig.add_hline(y=avg_sleep, line_color='green',
-                  line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}', annotation_position='top left')
-
     fig.show()
+
+# def plot_sleep():
+#     ''' Plot sleep data in a line chart of length of sleep '''
+#     sleep_data = get_sleep_data()
+#     hours_dict = {'Date': [], 'Hours': []}
+#     for sleep_date in sleep_data:
+#         try:
+#             next_day = sleep_date + timedelta(days=1)
+#             sleep_time = sleep_data[sleep_date]['sleep']
+#             wake_time = sleep_data[next_day]['wake']
+#             sleep_hours = wake_time - sleep_time
+#             hours_dict['Date'].append(sleep_date)
+#             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+#         except KeyError:  # missing data, or it's the current day
+#             pass
+
+#     sleep_df = pd.DataFrame(hours_dict)
+#     fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
+#     fig.update_traces(line=dict(width=3), marker=dict(size=10))
+
+#     # add horizontal line at average sleep
+#     avg_sleep = sleep_df['Hours'].mean()
+#     fig.add_hline(y=avg_sleep, line_color='green',
+#                   line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}', annotation_position='top left')
+
+#     fig.show()
 
 
 def get_sleep_data():
