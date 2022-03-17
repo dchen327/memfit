@@ -18,6 +18,7 @@ CORS(app)
 
 # Firebase setup
 load_dotenv()
+# replace \\n with \n since heroku config vars adds a \
 FIREBASE_CONFIG = {
     "type": "service_account",
     "project_id": "mem-fit",
