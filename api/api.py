@@ -18,12 +18,11 @@ CORS(app)
 
 # Firebase setup
 load_dotenv()
-print(os.getenv("PY_FIREBASE_PRIVATE_KEY_ID"))
 FIREBASE_CONFIG = {
     "type": "service_account",
     "project_id": "mem-fit",
     "private_key_id": os.getenv("PY_FIREBASE_PRIVATE_KEY_ID"),
-    "private_key": os.getenv("PY_FIREBASE_PRIVATE_KEY"),
+    "private_key": os.getenv("PY_FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
     "client_email": "firebase-adminsdk-m1254@mem-fit.iam.gserviceaccount.com",
     "client_id": "103893414132813680155",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
