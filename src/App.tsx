@@ -65,9 +65,7 @@ function App() {
       className="columns is-flex-direction-column"
       style={{ height: "100vh" }}
     >
-      <section className="section">
-        <Navbar />
-      </section>
+      <Navbar />
       <div className="column is-narrow has-text-centered">
         <button className="button" onClick={logSleep}>
           Log Sleep
