@@ -60,7 +60,7 @@ def log_sleep():
     # Check to make sure no logs of the same type have been made recently
     most_recent = sleep_ref.order_by(
         'datetime', direction='DESCENDING').limit(1).get()[0].to_dict()
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now()
 
     print(most_recent)
 
