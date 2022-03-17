@@ -22,7 +22,7 @@ interface ICharts {
 function App() {
   const [charts, setCharts] = useState<ICharts | null>(null);
 
-  const chartNames = ["Sleep"];
+  const chartNames = ["sleep"];
 
   useEffect(() => {
     console.log("pulling chart from api");
@@ -34,7 +34,7 @@ function App() {
       method: "POST",
       body: JSON.stringify({
         // params: charts is a list of chart names to return
-        charts: ["Sleep"],
+        charts: ["sleep"],
       }),
     }).then((res) =>
       res.json().then((chartJSON) => {
