@@ -153,10 +153,9 @@ def get_sleep_data():
     sleep_data = defaultdict(dict)
     # loop through sorted list of datetimes, label as sleep or wake
     for sleep_doc in sleep_docs:
-        sleep_date = sleep_doc.get('datetime')
+        sleep_date = sleep_doc.get('datetime').astimezone()
         sleep_type = sleep_doc.get('type')
-        # assume wake up is between 4AM and 4PM
-        sleep_data[sleep_date.date()][sleep_type] = sleep_date
+        sleep_data[sleep_date.date()][sleep_type] = sleep_date.astimezone()
 
     # dictionary of {date: {'sleep': '', 'wake': ''}}
     return sleep_data
