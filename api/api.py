@@ -48,7 +48,22 @@ def index():
 @cross_origin()
 def log_sleep():
     ''' Log sleep time to firestore db '''
-    sleep_ref.add({'datetime': datetime.datetime.now()})
+    params = request.get_json()
+    # convert ms to s, grab current local time (client time)
+    local_datetime = datetime.datetime.fromtimestamp(
+        params.get('currTime') / 1000.0)
+    sleep_type = 'wake' if datetime.time(
+        4, 0) < local_datetime.time() < datetime.time(16, 0) else 'sleep'
+    # Add UTC time, and sleep type
+    # sleep_ref.add({
+    #     'datetime': datetime.datetime.now(),
+    #     'type': sleep_type
+    # })
+    print({
+        'datetime': datetime.datetime.now(),
+        'type': sleep_type
+    })
+
     return jsonify(success=True)
 
 
