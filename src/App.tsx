@@ -52,7 +52,7 @@ function App() {
 
   return (
     <div>
-      <section className="section">
+      <section className="section is-medium">
         <Navbar />
       </section>
       <section className="section">
@@ -60,8 +60,16 @@ function App() {
           Log Sleep
         </button>
       </section>
-      <section className="section">
+      <section className="section is-large">
         {charts && <Charts charts={charts} chartNames={chartNames} />}
+      </section>
+      <section className="section is-medium">
+        <footer className="footer">
+          <div className="content has-text-centered">
+            <strong>MemFit</strong> by David Chen. Built with React, Bulma,
+            Firebase, Flask, and Plotly
+          </div>
+        </footer>
       </section>
     </div>
   );
