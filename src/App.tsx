@@ -51,26 +51,29 @@ function App() {
   };
 
   return (
-    <div>
-      <section className="section is-medium">
+    <div
+      className="columns is-flex-direction-column"
+      style={{ height: "100vh" }}
+    >
+      <section className="section">
         <Navbar />
       </section>
-      <section className="section">
+      <div className="column is-narrow">
         <button className="button" onClick={logSleep}>
           Log Sleep
         </button>
-      </section>
-      <section className="section is-large">
+      </div>
+      <div className="column">
         {charts && <Charts charts={charts} chartNames={chartNames} />}
-      </section>
-      <section className="section is-medium">
-        <footer className="footer">
+      </div>
+      <div className="column is-narrow">
+        <footer className="footer" style={{ padding: "1rem" }}>
           <div className="content has-text-centered">
             <strong>MemFit</strong> by David Chen. Built with React, Bulma,
             Firebase, Flask, and Plotly
           </div>
         </footer>
-      </section>
+      </div>
     </div>
   );
 }
