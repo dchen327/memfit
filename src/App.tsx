@@ -58,7 +58,12 @@ function App() {
     });
     const resText = await res.text();
     console.log("api called", resText);
-    toast.success(resText);
+    if (resText === 'Sleep logged') {
+      toast.success(resText);
+    }
+    else {
+      toast.error(resText);
+    }
   };
 
   return (
