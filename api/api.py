@@ -119,29 +119,22 @@ def get_requested_charts(chart_names):
 
 
 def get_sleep_chart():
-    ''' Plot sleep data in a line chart, return Plotly json '''
+    ''' Plot sleep data in a line chart, return plotly json '''
     sleep_data = get_sleep_data()
     hours_dict = {'Date': [], 'Hours': []}
-    # loop through copy of keys, since defaultdict might change with access
-    for sleep_date in list(sleep_data.keys()):
-        try:
-            next_day = sleep_date + datetime.timedelta(days=1)
-            sleep_time = sleep_data[sleep_date]['sleep']
-            wake_time = sleep_data[next_day]['wake']
+    # find number of hrs slept per day
+    for i in range(len(sleep_data) - 1):
+        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
+            # date is wake date minus 1 day (since sleep date might be after midnight)
+            sleep_date = sleep_data[i+1][0].date() - datetime.timedelta(days=1)
+            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
             sleep_hours = wake_time - sleep_time
             hours_dict['Date'].append(sleep_date)
             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
-        except KeyError:  # missing data, or it's the current day
-            pass
-
     sleep_df = pd.DataFrame(hours_dict)
-    fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
+    fig = px.line(sleep_df, x='Date', y='Hours',
+                  markers=True)
     fig.update_traces(line=dict(width=3), marker=dict(size=10))
-
-    # add horizontal line at average sleep
-    avg_sleep = sleep_df['Hours'].mean()
-    fig.add_hline(y=avg_sleep, line_color='green',
-                  line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}', annotation_position='top left')
 
     return fig.to_json()
 

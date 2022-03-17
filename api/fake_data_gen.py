@@ -80,6 +80,7 @@ def plot_sleep():
             # date is wake date minus 1 day
             sleep_date = sleep_data[i+1][0].date() - datetime.timedelta(days=1)
             sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
+            print(sleep_time, wake_time)
             sleep_hours = wake_time - sleep_time
             hours_dict['Date'].append(sleep_date)
             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
@@ -123,10 +124,10 @@ def get_sleep_data():
     sleep_docs = sort_date_query.stream()
     # list of tuples of (datetime, sleep/wake)
     return [
-        (sleep_doc.get('datetime'), sleep_doc.get('type'))
+        (sleep_doc.get('datetime').astimezone(), sleep_doc.get('type'))
         for sleep_doc in sleep_docs
     ]
 
 
-# plot_sleep()
-add_sleep(5)
+plot_sleep()
+# add_sleep(5)
