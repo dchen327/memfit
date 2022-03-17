@@ -15,6 +15,7 @@ from datetime import date, time, datetime, timedelta
 
 import plotly.express as px
 import pandas as pd
+from collections import defaultdict
 
 
 fake = Faker()
@@ -60,41 +61,48 @@ def add_sleep(num_days):
         sleep_ref.add({'datetime': wake_time, 'type': 'wake'})
 
 
+# def plot_sleep():
+#     ''' Plot sleep data in a line chart of length of sleep '''
+#     sleep_data = get_sleep_data()
+#     hours_dict = {'Date': [], 'Hours': []}
+#     for i in range(len(sleep_data) - 1):
+#         if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
+#             sleep_date = sleep_data[i+1][0].date()
+#             sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
+#             sleep_hours = wake_time - sleep_time
+#             hours_dict['Date'].append(sleep_date)
+#             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+#     sleep_df = pd.DataFrame(hours_dict)
+#     fig = px.line(sleep_df, x='Date', y='Hours',
+#                   markers=True)
+#     fig.update_traces(line=dict(width=3), marker=dict(size=10))
+
+#     fig.show()
+
 def plot_sleep():
     ''' Plot sleep data in a line chart of length of sleep '''
     sleep_data = get_sleep_data()
     hours_dict = {'Date': [], 'Hours': []}
-    for i in range(len(sleep_data) - 1):
-        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
-            sleep_date = sleep_data[i+1][0].date()
-            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
-            sleep_hours = wake_time - sleep_time
-            hours_dict['Date'].append(sleep_date)
-            hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
-    sleep_df = pd.DataFrame(hours_dict)
-    fig = px.line(sleep_df, x='Date', y='Hours',
-                  markers=True)
-    fig.update_traces(line=dict(width=3), marker=dict(size=10))
-
-    fig.show()
+    for date in sleep_data:
+        print(date, date + timedelta(days=1))
 
 
 def get_sleep_data():
     ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
     sort_date_query = sleep_ref.order_by('datetime')
     sleep_docs = sort_date_query.stream()
-    sleep_data = []
+    sleep_data = defaultdict(dict)
     # loop through sorted list of datetimes, label as sleep or wake
     for sleep_doc in sleep_docs:
         sleep_date = sleep_doc.get('datetime')
+        sleep_type = sleep_doc.get('type')
         # assume wake up is between 4AM and 4PM
-        if time(4, 0) < sleep_date.time() < time(16, 0):
-            sleep_data.append((sleep_date, 'wake'))
-        else:
-            sleep_data.append((sleep_date, 'sleep'))
+        sleep_data[sleep_date.date()][sleep_type] = sleep_date
 
-    # list of tuples (datetime, 'sleep' OR 'wake')
+    print(sleep_data)
+
+    # dictionary of {date: {'sleep': '', 'wake': ''}}
     return sleep_data
 
 
-add_sleep(30)
+plot_sleep()
