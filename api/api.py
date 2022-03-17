@@ -54,7 +54,7 @@ def log_sleep():
 
 @app.route('/api/charts', methods=['GET', 'POST'])
 @cross_origin()
-def charts():
+def get_charts():
     ''' Return requested generated charts '''
     params = request.get_json()
     chart_names = params.get('charts')
@@ -66,18 +66,17 @@ def charts():
 @cross_origin()
 def charts_from_firebase():
     ''' Return requested chart json strings from Firestore '''
-    params = request.get_json()
     charts = {}
+    params = request.get_json()
     chart_names = params.get('charts')
 
-    # charts collection has one document for each chart
-    # each chart document has just one field: {chart_name: chart_json}
-    docs = db.collection('charts').stream()
-    for doc in docs:
-        for chart_name, chart_json in doc.to_dict().items():
-            charts[chart_name] = chart_json
-
-    print(charts)
+    # charts collection has one document for each chart (doc name is the chart)
+    # each chart document has just one field: chart_json
+    charts_ref = db.collection('charts')
+    for chart_name in chart_names:
+        print(charts_ref.document(chart_name).get().to_dict())
+        chart_json = charts_ref.document(chart_name).get().get('chartJSON')
+        charts[chart_name] = chart_json
 
     return charts
 
@@ -87,9 +86,7 @@ def get_requested_charts(chart_names):
     charts = {}
     for chart_name in chart_names:
         if chart_name == 'sleep':
-            # charts[chart_name] = get_sleep_chart()
-            charts[chart_name] = px.scatter(
-                x=[0, 1, 2, 3, 4], y=[0, 1, 4, 9, 16]).to_json()
+            charts[chart_name] = get_sleep_chart()
 
     return charts
 

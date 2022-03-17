@@ -26,7 +26,7 @@ function App() {
 
   useEffect(() => {
     console.log("pulling chart from api");
-    fetch("/api/chartsFromFirebase", {
+    fetch("/api/charts", {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
