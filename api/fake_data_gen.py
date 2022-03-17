@@ -98,6 +98,11 @@ def plot_sleep():
     fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
     fig.update_traces(line=dict(width=3), marker=dict(size=10))
 
+    # add horizontal line at average sleep
+    avg_sleep = sleep_df['Hours'].mean()
+    fig.add_hline(y=avg_sleep, line_color='green',
+                  line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}')
+
     fig.show()
 
 
