@@ -83,8 +83,22 @@ def plot_sleep():
     ''' Plot sleep data in a line chart of length of sleep '''
     sleep_data = get_sleep_data()
     hours_dict = {'Date': [], 'Hours': []}
-    for date in sleep_data:
-        print(date, date + timedelta(days=1))
+    for sleep_date in sleep_data:
+        try:
+            next_day = sleep_date + timedelta(days=1)
+            sleep_time = sleep_data[sleep_date]['sleep']
+            wake_time = sleep_data[next_day]['wake']
+            sleep_hours = wake_time - sleep_time
+            hours_dict['Date'].append(sleep_date)
+            hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+        except KeyError:  # missing data, or it's the current day
+            pass
+
+    sleep_df = pd.DataFrame(hours_dict)
+    fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
+    fig.update_traces(line=dict(width=3), marker=dict(size=10))
+
+    fig.show()
 
 
 def get_sleep_data():
@@ -98,8 +112,6 @@ def get_sleep_data():
         sleep_type = sleep_doc.get('type')
         # assume wake up is between 4AM and 4PM
         sleep_data[sleep_date.date()][sleep_type] = sleep_date
-
-    print(sleep_data)
 
     # dictionary of {date: {'sleep': '', 'wake': ''}}
     return sleep_data
