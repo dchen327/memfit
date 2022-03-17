@@ -101,7 +101,7 @@ def plot_sleep():
     # add horizontal line at average sleep
     avg_sleep = sleep_df['Hours'].mean()
     fig.add_hline(y=avg_sleep, line_color='green',
-                  line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}')
+                  line_dash='dash', annotation_text=f'Average: {round(avg_sleep, 2)}', annotation_position='top left')
 
     fig.show()
 
