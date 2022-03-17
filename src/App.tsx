@@ -4,6 +4,7 @@ import { Navbar } from "./components/Navbar";
 import { initializeApp } from "firebase/app";
 import { useEffect, useState } from "react";
 import Charts from "./components/Charts";
+import toast, { Toaster } from "react-hot-toast";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -57,14 +58,16 @@ function App() {
     });
     const resText = await res.text();
     console.log("api called", resText);
+    toast.success(resText);
   };
 
   return (
-    // Use columns horizontally, set
+    // Use columns horizontally to make footer sit at bottom
     <div
       className="columns is-flex-direction-column"
       style={{ height: "100vh" }}
     >
+      <Toaster />
       <Navbar />
       <div className="column is-narrow has-text-centered">
         <button className="button" onClick={logSleep}>
