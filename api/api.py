@@ -69,11 +69,15 @@ def charts_from_firebase():
     params = request.get_json()
     charts = {}
     chart_names = params.get('charts')
-    charts_ref = db.collection('charts')
 
-    for chart_name in chart_names:
-        chart = charts_ref.document(chart_name).get()
-        charts[chart_name] = chart
+    # charts collection has one document for each chart
+    # each chart document has just one field: {chart_name: chart_json}
+    docs = db.collection('charts').stream()
+    for doc in docs:
+        for chart_name, chart_json in doc.to_dict().items():
+            charts[chart_name] = chart_json
+
+    print(charts)
 
     return charts
 
