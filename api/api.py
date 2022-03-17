@@ -64,7 +64,7 @@ def log_sleep():
 
     # assume less than 3 hours of sleep is a mistake (duplicate log)
     if now - most_recent['datetime'] < datetime.timedelta(hours=3):
-        return {'Result': 'Too soon to make another sleep log'}
+        return 'Too soon to make another sleep log'
 
     # Add UTC time, and sleep type
     sleep_ref.add({
@@ -72,7 +72,7 @@ def log_sleep():
         'type': sleep_type
     })
 
-    return {'Result': 'Sleep logged'}
+    return 'Sleep logged'
 
 
 @app.route('/api/charts', methods=['GET', 'POST'])

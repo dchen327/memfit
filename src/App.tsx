@@ -43,8 +43,8 @@ function App() {
     );
   }, []);
 
-  const logSleep = () => {
-    fetch("/api/logSleep", {
+  const logSleep = async () => {
+    const res = await fetch("/api/logSleep", {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -54,7 +54,8 @@ function App() {
         currTime: new Date().getTime(),
       }),
     });
-    console.log("api called");
+    const resJSON = await res.json();
+    console.log("api called", data);
   };
 
   return (
