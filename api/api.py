@@ -150,12 +150,8 @@ def get_sleep_data():
     ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
     sort_date_query = sleep_ref.order_by('datetime')
     sleep_docs = sort_date_query.stream()
-    sleep_data = defaultdict(dict)
-    # loop through sorted list of datetimes, label as sleep or wake
-    for sleep_doc in sleep_docs:
-        sleep_date = sleep_doc.get('datetime').astimezone()
-        sleep_type = sleep_doc.get('type')
-        sleep_data[sleep_date.date()][sleep_type] = sleep_date.astimezone()
-
-    # dictionary of {date: {'sleep': '', 'wake': ''}}
-    return sleep_data
+    # list of tuples of (datetime, sleep/wake)
+    return [
+        (sleep_doc.get('datetime').astimezone(), sleep_doc.get('type'))
+        for sleep_doc in sleep_docs
+    ]
