@@ -60,9 +60,8 @@ def log_sleep():
     # Check to make sure no logs of the same type have been made recently
     most_recent = sleep_ref.order_by(
         'datetime', direction='DESCENDING').limit(1).get()[0].to_dict()
-    now = datetime.datetime.now()
-
-    print(most_recent)
+    now = datetime.datetime.now().astimezone()
+    print(now - most_recent['datetime'])
 
     # assume less than 3 hours of sleep is a mistake (duplicate log)
     if now - most_recent['datetime'] < datetime.timedelta(hours=3):

@@ -55,7 +55,7 @@ def add_sleep(num_days):
     delete_collection(sleep_ref)
 
     today_date = date.today()
-    for day_num in range(num_days):
+    for day_num in range(1, num_days):
         day = today_date - timedelta(days=day_num)
         # sleep between 10PM and 2AM
         earliest_sleep = datetime.combine(
