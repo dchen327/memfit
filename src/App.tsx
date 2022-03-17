@@ -51,6 +51,7 @@ function App() {
   };
 
   return (
+    // Use columns horizontally, set
     <div
       className="columns is-flex-direction-column"
       style={{ height: "100vh" }}
@@ -58,12 +59,12 @@ function App() {
       <section className="section">
         <Navbar />
       </section>
-      <div className="column is-narrow">
+      <div className="column is-narrow has-text-centered">
         <button className="button" onClick={logSleep}>
           Log Sleep
         </button>
       </div>
-      <div className="column">
+      <div className="column has-text-centered">
         {charts && <Charts charts={charts} chartNames={chartNames} />}
       </div>
       <div className="column is-narrow">
