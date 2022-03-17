@@ -49,22 +49,30 @@ def index():
 def log_sleep():
     ''' Log sleep time to firestore db '''
     params = request.get_json()
-    # convert ms to s, grab current local time (client time)
+    # Convert ms to s, grab current local time (client time)
     local_datetime = datetime.datetime.fromtimestamp(
         params.get('currTime') / 1000.0)
+
+    # Assume wake is between 4AM and 4PM, sleep otherwise
     sleep_type = 'wake' if datetime.time(
         4, 0) < local_datetime.time() < datetime.time(16, 0) else 'sleep'
+
+    # Check to make sure no logs of the same type have been made recently
+    most_recent = sleep_ref.order_by(
+        'datetime', direction='DESCENDING').limit(1).get()[0].to_dict()
+    now = datetime.datetime.now(datetime.timezone.utc)
+
+    # assume less than 3 hours of sleep is a mistake (duplicate log)
+    if now - most_recent['datetime'] < datetime.timedelta(hours=3):
+        return {'Result': 'Too soon to make another sleep log'}
+
     # Add UTC time, and sleep type
-    # sleep_ref.add({
-    #     'datetime': datetime.datetime.now(),
-    #     'type': sleep_type
-    # })
-    print({
-        'datetime': datetime.datetime.now(),
+    sleep_ref.add({
+        'datetime': now,
         'type': sleep_type
     })
 
-    return jsonify(success=True)
+    return {'Result': 'Sleep logged'}
 
 
 @app.route('/api/charts', methods=['GET', 'POST'])
