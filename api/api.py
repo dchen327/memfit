@@ -10,6 +10,7 @@ import os
 import plotly.express as px
 import pandas as pd
 import datetime
+from collections import defaultdict
 
 
 # Flask setup
@@ -61,7 +62,6 @@ def log_sleep():
     most_recent = sleep_ref.order_by(
         'datetime', direction='DESCENDING').limit(1).get()[0].to_dict()
     now = datetime.datetime.now().astimezone()
-    print(now - most_recent['datetime'])
 
     # assume less than 3 hours of sleep is a mistake (duplicate log)
     if now - most_recent['datetime'] < datetime.timedelta(hours=3):
@@ -122,13 +122,18 @@ def get_sleep_chart():
     ''' Plot sleep data in a line chart, return Plotly json '''
     sleep_data = get_sleep_data()
     hours_dict = {'Date': [], 'Hours': []}
-    for i in range(len(sleep_data) - 1):
-        if sleep_data[i][1] == 'sleep' and sleep_data[i+1][1] == 'wake':
-            sleep_date = sleep_data[i+1][0].date()
-            sleep_time, wake_time = sleep_data[i][0], sleep_data[i+1][0]
+    # loop through copy of keys, since defaultdict might change with access
+    for sleep_date in list(sleep_data.keys()):
+        try:
+            next_day = sleep_date + datetime.timedelta(days=1)
+            sleep_time = sleep_data[sleep_date]['sleep']
+            wake_time = sleep_data[next_day]['wake']
             sleep_hours = wake_time - sleep_time
             hours_dict['Date'].append(sleep_date)
             hours_dict['Hours'].append(round(sleep_hours.seconds / 3600, 2))
+        except KeyError:  # missing data, or it's the current day
+            pass
+
     sleep_df = pd.DataFrame(hours_dict)
     fig = px.line(sleep_df, x='Date', y='Hours', markers=True)
     fig.update_traces(line=dict(width=3), marker=dict(size=10))
@@ -145,15 +150,13 @@ def get_sleep_data():
     ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
     sort_date_query = sleep_ref.order_by('datetime')
     sleep_docs = sort_date_query.stream()
-    sleep_data = []
+    sleep_data = defaultdict(dict)
     # loop through sorted list of datetimes, label as sleep or wake
     for sleep_doc in sleep_docs:
         sleep_date = sleep_doc.get('datetime')
+        sleep_type = sleep_doc.get('type')
         # assume wake up is between 4AM and 4PM
-        if datetime.time(4, 0) < sleep_date.time() < datetime.time(16, 0):
-            sleep_data.append((sleep_date, 'wake'))
-        else:
-            sleep_data.append((sleep_date, 'sleep'))
+        sleep_data[sleep_date.date()][sleep_type] = sleep_date
 
-    # list of tuples (datetime, 'sleep' OR 'wake')
+    # dictionary of {date: {'sleep': '', 'wake': ''}}
     return sleep_data
