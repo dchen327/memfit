@@ -11,7 +11,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-from datetime import date, time, datetime, timedelta
+from datetime import date, time, datetime, timedelta, timezone
 
 import plotly.express as px
 import pandas as pd
@@ -43,20 +43,32 @@ db = firebase_admin.firestore.client()
 sleep_ref = db.collection('sleep')
 
 
+def delete_collection(col_ref):
+    ''' Delete all data in sleep collection '''
+    docs = col_ref.stream()
+    for doc in docs:
+        doc.reference.delete()
+
+
 def add_sleep(num_days):
     ''' Add randomized sleep times '''
+    delete_collection(sleep_ref)
+
     today_date = date.today()
     for day_num in range(num_days):
         day = today_date - timedelta(days=day_num)
         # sleep between 10PM and 2AM
-        earliest_sleep = datetime.combine(day, time(22, 0))
+        earliest_sleep = datetime.combine(
+            day, time(22, 0))
         latest_sleep = datetime.combine(
             day + timedelta(days=1), time(2, 0))
         sleep_time = fake.date_time_between(
-            start_date=earliest_sleep, end_date=latest_sleep)
+            start_date=earliest_sleep, end_date=latest_sleep).astimezone()
+
         # sleep between 5-10 hours
         wake_time = sleep_time + \
             timedelta(minutes=random.randint(5 * 60, 10 * 60))
+        print(sleep_time, wake_time)
         sleep_ref.add({'datetime': sleep_time, 'type': 'sleep'})
         sleep_ref.add({'datetime': wake_time, 'type': 'wake'})
 
@@ -122,4 +134,5 @@ def get_sleep_data():
     return sleep_data
 
 
-plot_sleep()
+# plot_sleep()
+add_sleep(5)

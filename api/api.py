@@ -62,6 +62,8 @@ def log_sleep():
         'datetime', direction='DESCENDING').limit(1).get()[0].to_dict()
     now = datetime.datetime.now(datetime.timezone.utc)
 
+    print(most_recent)
+
     # assume less than 3 hours of sleep is a mistake (duplicate log)
     if now - most_recent['datetime'] < datetime.timedelta(hours=3):
         return 'Too soon to make another sleep log'
@@ -109,10 +111,10 @@ def get_requested_charts(chart_names):
     charts = {}
     for chart_name in chart_names:
         if chart_name == 'sleep':
-            # charts[chart_name] = get_sleep_chart()
+            charts[chart_name] = get_sleep_chart()
             # debug, return simple scatter plot json
-            charts[chart_name] = px.scatter(
-                x=[1, 2, 3, 4], y=[2, 3, 1, 4]).to_json()
+            # charts[chart_name] = px.scatter(
+            #     x=[1, 2, 3, 4], y=[2, 3, 1, 4]).to_json()
 
     return charts
 
