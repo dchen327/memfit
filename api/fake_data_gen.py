@@ -8,6 +8,8 @@ from firebase_admin import firestore
 import random
 from faker import Faker
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 from datetime import date, time, datetime, timedelta
 
@@ -17,9 +19,22 @@ import pandas as pd
 
 fake = Faker()
 
-cred_path = Path('./api/firebase_key.json')
-# list files in directory
-cred = credentials.Certificate(cred_path)
+# Firebase setup
+load_dotenv()
+# replace \\n with \n since heroku config vars adds a \
+FIREBASE_CONFIG = {
+    "type": "service_account",
+    "project_id": "mem-fit",
+    "private_key_id": os.getenv("PY_FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("PY_FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": "firebase-adminsdk-m1254@mem-fit.iam.gserviceaccount.com",
+    "client_id": "103893414132813680155",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-m1254%40mem-fit.iam.gserviceaccount.com"
+}
+cred = credentials.Certificate(FIREBASE_CONFIG)
 firebase_admin.initialize_app(cred, {'projectId': 'mem-fit'})
 
 db = firebase_admin.firestore.client()
@@ -27,10 +42,10 @@ db = firebase_admin.firestore.client()
 sleep_ref = db.collection('sleep')
 
 
-def add_sleep():
+def add_sleep(num_days):
     ''' Add randomized sleep times '''
     today_date = date.today()
-    for day_num in range(10):
+    for day_num in range(num_days):
         day = today_date - timedelta(days=day_num)
         # sleep between 10PM and 2AM
         earliest_sleep = datetime.combine(day, time(22, 0))
@@ -82,4 +97,4 @@ def get_sleep_data():
     return sleep_data
 
 
-plot_sleep()
+add_sleep(30)
