@@ -56,8 +56,8 @@ def add_sleep(num_days):
         # sleep between 5-10 hours
         wake_time = sleep_time + \
             timedelta(minutes=random.randint(5 * 60, 10 * 60))
-        sleep_ref.add({'datetime': sleep_time})
-        sleep_ref.add({'datetime': wake_time})
+        sleep_ref.add({'datetime': sleep_time, 'type': 'sleep'})
+        sleep_ref.add({'datetime': wake_time, 'type': 'wake'})
 
 
 def plot_sleep():
