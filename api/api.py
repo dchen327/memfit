@@ -67,9 +67,15 @@ def charts():
 def charts_from_firebase():
     ''' Return requested chart json strings from Firestore '''
     params = request.get_json()
+    charts = {}
     chart_names = params.get('charts')
+    charts_ref = db.collection('charts')
 
-    return get_requested_charts_from_firebase(chart_names)
+    for chart_name in chart_names:
+        chart = charts_ref.document(chart_name).get()
+        charts[chart_name] = chart
+
+    return charts
 
 
 def get_requested_charts(chart_names):
