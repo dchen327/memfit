@@ -1,3 +1,4 @@
+import { Footer } from "./components/Footer";
 import "bulma/css/bulma.min.css";
 import { Navbar } from "./components/Navbar";
 import { initializeApp } from "firebase/app";
@@ -75,14 +76,7 @@ function App() {
       <div className="column has-text-centered">
         {charts && <Charts charts={charts} chartNames={chartNames} />}
       </div>
-      <div className="column is-narrow">
-        <footer className="footer" style={{ padding: "1rem" }}>
-          <div className="content has-text-centered">
-            <strong>MemFit</strong> by David Chen. Built with React, Bulma,
-            Firebase, Flask, and Plotly
-          </div>
-        </footer>
-      </div>
+      <Footer />
     </div>
   );
 }
