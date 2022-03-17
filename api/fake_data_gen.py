@@ -15,7 +15,6 @@ from datetime import date, time, datetime, timedelta, timezone
 
 import plotly.express as px
 import pandas as pd
-from collections import defaultdict
 
 
 fake = Faker()
@@ -122,16 +121,11 @@ def get_sleep_data():
     ''' Get sleep data from Firestore, sort and organize by sleep/wake '''
     sort_date_query = sleep_ref.order_by('datetime')
     sleep_docs = sort_date_query.stream()
-    sleep_data = defaultdict(dict)
-    # loop through sorted list of datetimes, label as sleep or wake
-    for sleep_doc in sleep_docs:
-        sleep_date = sleep_doc.get('datetime')
-        sleep_type = sleep_doc.get('type')
-        # assume wake up is between 4AM and 4PM
-        sleep_data[sleep_date.date()][sleep_type] = sleep_date
-
-    # dictionary of {date: {'sleep': '', 'wake': ''}}
-    return sleep_data
+    # list of tuples of (datetime, sleep/wake)
+    return [
+        (sleep_doc.get('datetime'), sleep_doc.get('type'))
+        for sleep_doc in sleep_docs
+    ]
 
 
 # plot_sleep()
