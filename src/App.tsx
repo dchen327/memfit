@@ -58,7 +58,7 @@ function App() {
     });
     const resText = await res.text();
     console.log("api called", resText);
-    if (resText === "Sleep logged") {
+    if (resText !== "It looks like you already logged your sleep/wake time.") {
       toast.success(resText, {
         duration: 3000,
       });

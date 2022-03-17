@@ -65,7 +65,7 @@ def log_sleep():
 
     # assume less than 3 hours of sleep is a mistake (duplicate log)
     if now - most_recent['datetime'] < datetime.timedelta(hours=3):
-        return 'Too soon to make another sleep log'
+        return 'It looks like you already logged your sleep/wake time.'
 
     # Add UTC time, and sleep type
     sleep_ref.add({
@@ -73,7 +73,7 @@ def log_sleep():
         'type': sleep_type
     })
 
-    return 'Sleep logged'
+    return f'Logged {sleep_type} time!'
 
 
 @app.route('/api/charts', methods=['GET', 'POST'])
@@ -98,7 +98,6 @@ def charts_from_firebase():
     # each chart document has just one field: chart_json
     charts_ref = db.collection('charts')
     for chart_name in chart_names:
-        print(charts_ref.document(chart_name).get().to_dict())
         chart_json = charts_ref.document(chart_name).get().get('chartJSON')
         charts[chart_name] = chart_json
 
