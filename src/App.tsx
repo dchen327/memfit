@@ -73,7 +73,7 @@ function App() {
     // Use columns horizontally to make footer sit at bottom
     <div
       className="columns is-flex-direction-column"
-      style={{ height: "100vh" }}
+      style={{ height: "100vh", padding: 0, margin: 0 }}
     >
       <Toaster />
       <Navbar />
