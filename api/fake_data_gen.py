@@ -54,7 +54,7 @@ def add_sleep(num_days):
 
     today_date = datetime.date.today()
     for day_num in range(1, num_days):
-        day = today_date.date - datetime.timedelta(days=day_num)
+        day = today_date - datetime.timedelta(days=day_num)
         # sleep between 10PM and 2AM
         earliest_sleep = datetime.datetime.combine(
             day, datetime.time(22, 0))
@@ -129,5 +129,5 @@ def get_sleep_data():
     ]
 
 
-plot_sleep()
-# add_sleep(5)
+# plot_sleep()
+add_sleep(50)
